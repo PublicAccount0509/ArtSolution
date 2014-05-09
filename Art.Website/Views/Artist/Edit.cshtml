@@ -1,0 +1,184 @@
+﻿@model ArtistEditModel
+
+@{    
+	Layout = "~/Views/Shared/_ArtLayout.cshtml";
+	ViewBag.Title = "Add Artist";
+}
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/Views/ArtistEdit.js"></script>
+<script src="~/Scripts/Extension/kendo.Extension.js"></script>
+<script src="~/Scripts/webExpress/webExpress.controls.adpaters.js"></script>
+<script>
+	$(function () {
+		@{ var str = WebExpress.Website.Serialization.JavaScriptJsonSerializer.Instance.Serialize(Model); }
+		var model = @Html.Raw(@str);
+		  
+		var viewInstance = new art.ui.views.ArtistEdit();
+
+		viewInstance.init();
+
+		viewInstance.bindModel(model);
+	}); 
+
+	function iframeFileUpload_onload(iframe){    
+		var doc = iframe.contentDocument || iframe.contentWindow.document;
+		if (doc.body.innerHTML) {
+			var model = $.parseJSON(doc.body.innerHTML);
+			if (model.IsSuccess) {
+				var fullFilePath =webExpress.utility.url.getFullUrl(model.UploadedFileName);
+				viewModel.Artist.set("AvatarFileName",fullFilePath);
+			}
+			else {
+				alert(model.Message);
+			}
+		}
+	}
+	
+</script>
+<div class="conterbox addAuthor">
+	<h2 class="crumbs">您所在位置：艺术家管理 > 添加艺术家
+	</h2>
+	<div class="addbox">
+		<form action="/Files.axd" method="post" enctype="multipart/form-data" target="iframeFileUpload">
+			<dl class="name clearfix mandatory" property-name="Artist.Name" control-type="simpleTextbox">
+				<dt><i>*</i>姓名:</dt>
+				<dd>
+					<input type="text" value="" class="nameinp" />
+					@*<span class="t-errormessage">请填写姓名</span>*@
+
+				</dd>
+			</dl>
+			<dl class="sex clearfix" property-name="Artist.Gender" control-type="simpleRadioButton">
+				<dt><i>*</i>性别:</dt>
+				<dd>男：<input type="radio" value="1" />
+					女：<input type="radio" value="2" /><span class="t-errormessage hide">请选择姓名</span>
+						<label for="Artist.Gender" class="error">Please select your gender</label>
+				</dd>
+			</dl>
+			<dl class="birthyear clearfix date" property-name="Artist.Birthday" control-type="dateSelects" >
+				<dt><i>*</i>出生年月:</dt>
+				<dd>
+					<select name="year">
+						@for (int i = 1949; i <= DateTime.Now.Year; i++)
+						{
+							<option value="@i">@i 年</option>
+						}
+					</select>
+
+					<select name="month">
+						@for (int i = 1; i <= 12; i++)
+						{
+							<option value="@i">@i 月</option>
+						}
+					</select>
+
+					<select name="day">
+						@for (int i = 1; i <= 31; i++)
+						{
+							<option value="@i">@i 日</option>
+						}
+					</select>
+				</dd>
+			</dl>
+			<dl class="birthyear clearfix date" property-name="Artist.Deathday" control-type="dateSelects">
+				<dt><i>*</i>卒于:</dt>
+				<dd>
+					<select name="year">
+						@for (int i = 1949; i <= DateTime.Now.Year; i++)
+						{
+							<option value="@i">@i 年</option>
+						}
+					</select>
+
+					<select name="month">
+						@for (int i = 1; i <= 12; i++)
+						{
+							<option value="@i">@i 月</option>
+						}
+					</select>
+
+					<select name="day">
+						@for (int i = 1; i <= 31; i++)
+						{
+							<option value="@i">@i 日</option>
+						}
+					</select>
+				</dd>
+			</dl>
+			<dl class="education clearfix" data-source="Degrees" property-name="Artist.Degree" control-type="simpleDropdown">
+				<dt><i>*</i>学历:</dt>
+				<dd>
+					<select name="degree" data-value-field="Value" data-text-field="Text" >
+					</select>
+				</dd>
+			</dl>
+			<dl class="graduate-school clearfix" property-name="Artist.School" control-type="simpleTextbox">
+				<dt><i>*</i>毕业院校:</dt>
+				<dd>
+					<input type="text" name="School" required class="graduate-schoolinp"  />
+				</dd>
+			</dl>
+			<dl class="awards clearfix" property-name="Artist.PrizeItems" control-type="simpleTextarea">
+				<dt><i>*</i>所获奖项:</dt>
+				<dd>
+					<textarea class="awardsinp"></textarea><span class="t-errormessage hide">请填写得过奖项</span>
+				</dd>
+			</dl>
+			 
+
+			<dl class="genre clearfix mandatory" property-name="Artist.ProfessionIds" control-type="simpleCheckbox">
+				<dt><i>*</i>流派:<span class="t-errormessage hide">请选择流派</span></dt>
+				<dd class="checkboxjj">
+
+					@for (int i = 0; i < Model.SourceProfessions.Length; i++)
+					{
+						<span>
+							<input type="checkbox" value="@Model.SourceProfessions[i].Id" />@Model.SourceProfessions[i].Name</span>    
+					}
+					<label for="Artist.ProfessionIds" class="error">Please select at least two types of spam.</label>
+				</dd>
+			</dl>
+			<dl class="beGoodAt clearfix" property-name="Artist.SkilledGenreIds" control-type="simpleCheckbox">
+				<dt><i>*</i>擅长:</dt>
+				<dd class="checkboxjj">
+					@for (int i = 0; i < Model.SourceGenres.Length; i++)
+					{
+						<span>
+							<input type="checkbox" value="@Model.SourceGenres[i].Id" />@Model.SourceGenres[i].Name</span>
+					}
+					<span class="t-errormessage hide">请选择擅长</span>
+				</dd>
+			</dl>
+			<dl class="representative clearfix" property-name="Artist.Masterpiece" control-type="simpleTextbox">
+				<dt><i>*</i>代表作品</dt>
+				<dd>
+					<input type="text" class="representativeinp" />
+					属性
+					<select name="">
+						<option value="" selected="selected">油画</option>
+						<option value="">国画</option>
+						<option value="">水墨画</option>
+						<option value="">当代画</option>
+					</select>
+					<span class="t-errormessage hide">请填写代表作</span>
+				</dd>
+			</dl>
+			<dl class="authorimg clearfix" property-name="Artist.AvatarFileName" control-type="simpleImg">
+				<dt><i>*</i>作者头像</dt>
+				<dd>
+					<input type="file" name="avatarImage" /><span class="t-errormessage hide">请选择头像</span>
+						<div>
+					<img class="avatar" style="width: 100px;" />
+							</div>
+				</dd>
+			</dl>
+			<p class="yesOrNo">
+				<span>
+					<input type="button" value="新增" id="J_addbtn" class="btn" /></span>
+				<span>
+					<input type="submit" value="取消" id="J_quxiaobtn" class="btn" /></span>
+			</p>
+		</form>
+		<iframe name="iframeFileUpload" onload="iframeFileUpload_onload(this)" style="display: none"></iframe>
+	</div>
+</div>

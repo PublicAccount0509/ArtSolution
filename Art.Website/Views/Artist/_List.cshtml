@@ -1,0 +1,108 @@
+﻿@model PagedArtistModel
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="t-grid">
+    <thead>
+        <tr>
+            <th>序号</th>
+            <th>姓名</th>
+            <th>分类</th>
+            <th>状态</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.Artists.Count; i++)
+        {
+            var item = Model.Artists[i];
+            <tr>
+                <td style="text-align: center; width: 50px">@(i + 1)</td>
+                <td>@item.Name</td>
+                <td>@string.Join(",", item.ProfessionNames)</td>
+                <td style="text-align: center">@(item.IsPublic ? "已发布" : "未发布")</td>
+                <td style="text-align: center" class="floperation">
+                    <a href="Artist/Edit/@item.Id" target="_blank">编辑</a>
+                    <a href="javascript:void(0)" url="Artist/Delete/@item.Id" class="J_deletezzBtn">删除</a>
+
+                    @if (item.IsPublic)
+                    {
+                        if (item.CanUnPublish)
+                        {
+                        <a href="javascript:void(0)" url="/Artist/UnPublish/@item.Id" class="J_issueBtn">取消发布</a>    
+                        }
+                    }
+                    else
+                    {
+                        <a href="javascript:void(0)" url="/Artist/Publish/@item.Id" class="J_issueBtn">发布</a>
+                    }
+
+                    <a href="javascript:void(0)" url="/Artist/Detail/@item.Id" class="J_zjIinfo">查看详情</a>
+                    <a href="javascript:void(0)" class="">查看作品</a>
+                </td>
+            </tr>  
+        }
+    </tbody>
+</table>
+
+<div class="grid-pager clearfix">
+    <div class="t-status-text">显示记录@(Model.Artists.Count)条,共@(Model.PagingResult.TotalCount)条</div>
+    <div class="t-pager t-reset">
+        <a href="#" class="t-link t-state-disabled">
+            <!--变灰不可选-->
+            <span class="t-icon t-arrow-first-gray">first</span>
+            <!--变高亮可选
+                        <span class="t-icon t-arrow-first">first</span>
+                        -->
+        </a>
+        <a href="#" class="t-link t-state-disabled">
+            <!--变灰不可选-->
+            <span class="t-icon t-arrow-prev-gray">prev</span>
+            <!--高亮可选
+                        <span class="t-icon t-arrow-prev">prev</span>
+                        -->
+        </a>
+        <div class="t-numeric">
+            @for (int i = 0; i < Model.PagingResult.TotalPages; i++)
+            {
+                if (Model.PagingResult.PageIndex == i)
+                {
+                <a class="t-state-active">@(i + 1)</a>        
+                }
+                else
+                {
+                <a onclick="refresh(@(i))" class="t-link num">@(i + 1)</a>    
+                }
+            }
+
+        </div>
+        <a href="#" class="t-link">
+
+            @if (Model.PagingResult.HasNextPage)
+            {
+                <!--高亮可选-->
+                <span class="t-icon t-arrow-next">next</span>    
+            }
+            else
+            {
+                <!--变灰不可选-->
+                <span class="t-icon t-arrow-next-gray">next</span>
+            }
+
+
+        </a>
+        <a href="#" class="t-link">
+            @if (Model.PagingResult.HasPreviousPage)
+            {
+                <!--高亮可选-->
+                <span class="t-icon t-arrow-last">last</span>    
+            }
+            else
+            {
+                <!--变灰不可选-->
+                <span class="t-icon t-arrow-last-gray">last</span>        
+            }
+        </a>
+    </div>
+
+    <div class="refresh">
+        <a href="" class="t-refresh">刷新</a>
+    </div>
+</div>
